@@ -69,4 +69,19 @@ router.get('/detail', authUser, async (req, res) => {
     }
 })
 
+// Public list: stories visible to everyone (approved)
+router.get('/list/public', async (req, res) => {
+    try {
+        const pool = await getPool()
+        const [rows] = await pool.query(
+            "SELECT id, LEFT(content,60) AS preview, images, created_at FROM stories WHERE is_deleted=0 AND status='approved' ORDER BY created_at DESC"
+        )
+        const data = rows.map(r => Object.assign({}, r, { images: safeParseJSON(r.images) }))
+        res.json({ success: true, data })
+    } catch (err) {
+        console.error('Error in /story/list/public:', err)
+        res.status(500).json({ success: false, message: '服务器内部错误' })
+    }
+})
+
 module.exports = router
