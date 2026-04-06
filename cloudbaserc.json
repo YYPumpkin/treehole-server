@@ -1,0 +1,21 @@
+{
+    "version": "2.0",
+    "envId": "shekinah-treehole-0e4okrc2e6d60a",
+    "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json",
+    "framework": {
+        "name": "treehole-server",
+        "plugins": {
+            "node": {
+                "use": "@cloudbase/framework-plugin-node",
+                "inputs": {
+                    "name": "treehole-server",
+                    "path": "/treehole-server",
+                    "platform": "container",
+                    "buildCommand": "npm install",
+                    "startCommand": "node index.js",
+                    "serverDirectory": "."
+                }
+            }
+        }
+    }
+}
