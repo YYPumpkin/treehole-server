@@ -58,6 +58,18 @@ app.use('/api/user', userRoutes)
 app.use('/api/story', storyRoutes)
 app.use('/api/editor', editorRoutes)
 
+// Health check endpoint for deployment diagnostics
+app.get('/api/health', async (req, res) => {
+    try {
+        const pool = await getPool()
+        const [rows] = await pool.query('SELECT 1 AS ok')
+        res.json({ success: true, db: rows && rows.length ? true : false })
+    } catch (e) {
+        console.error('Health check DB error:', e)
+        res.status(500).json({ success: false, message: 'DB connection failed', error: String(e) })
+    }
+})
+
 const PORT = process.env.PORT || 3000
 
 async function startServer() {
