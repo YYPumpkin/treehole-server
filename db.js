@@ -2,7 +2,7 @@ const mysql = require('mysql2/promise')
 let pool = null
 async function getPool() {
     if (pool) return pool
-    pool = mysql.createPool({
+    const opts = {
         host: process.env.DB_HOST || '127.0.0.1',
         user: process.env.DB_USER || 'root',
         database: process.env.DB_NAME || 'treehole',
@@ -11,7 +11,12 @@ async function getPool() {
         waitForConnections: true,
         connectionLimit: 10,
         charset: 'utf8mb4'
-    })
+    }
+    // TiDB Cloud Serverless 需要 SSL
+    if (process.env.DB_SSL === '1') {
+        opts.ssl = { rejectUnauthorized: true }
+    }
+    pool = mysql.createPool(opts)
     // 尝试快速连接测试，失败时记录详细错误，保留 pool 以便后续重试
     try {
         const conn = await pool.getConnection()
