@@ -49,7 +49,7 @@ app.post('/api/upload/image', (req, res, next) => {
     next()
 }, authUser, upload.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ success: false, message: '未收到文件' })
-    const host = process.env.SERVER_HOST || `http://127.0.0.1:${process.env.PORT || 3000}`
+    const host = process.env.SERVER_HOST || `${req.protocol}://${req.get('host')}`
     const url = `${host}/uploads/${req.file.filename}`
     console.log('[upload] success:', url)
     res.json({ success: true, data: { url } })
