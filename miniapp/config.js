@@ -3,5 +3,5 @@
 // Example: module.exports = { host: 'https://treehole.example.com' }
 
 module.exports = {
-    host: ''
+    host: 'https://express-242848-8-1419515387.sh.run.tcloudbase.com'
 }
