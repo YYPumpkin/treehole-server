@@ -86,6 +86,17 @@ app.get('/api/debug', (req, res) => {
     res.json({ success: true, env })
 })
 
+// TCP connectivity test endpoint
+app.get('/api/tcptest', (req, res) => {
+    const net = require('net')
+    const host = process.env.DB_HOST || '127.0.0.1'
+    const port = parseInt(process.env.DB_PORT || '3306')
+    const sock = net.createConnection({ host, port, timeout: 5000 })
+    sock.once('connect', () => { sock.destroy(); res.json({ success: true, msg: `TCP connect to ${host}:${port} OK` }) })
+    sock.once('timeout', () => { sock.destroy(); res.status(500).json({ success: false, msg: `TCP timeout to ${host}:${port}` }) })
+    sock.once('error', (e) => { res.status(500).json({ success: false, msg: `TCP error to ${host}:${port}: ${e.message}` }) })
+})
+
 const PORT = process.env.PORT || 3000
 
 async function startServer() {
