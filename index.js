@@ -77,6 +77,9 @@ app.get('/api/debug', (req, res) => {
         NODE_ENV: process.env.NODE_ENV || 'development',
         PORT: process.env.PORT || '3000',
         DB_HOST: process.env.DB_HOST ? 'set' : 'unset',
+        DB_PORT: process.env.DB_PORT ? 'set' : 'unset(default 3306)',
+        DB_USER: process.env.DB_USER ? 'set' : 'unset(default root)',
+        DB_PASS: process.env.DB_PASS ? 'set' : 'unset(empty)',
         DB_NAME: process.env.DB_NAME ? 'set' : 'unset',
         MIGRATE_ON_START: process.env.MIGRATE_ON_START || '0'
     }
