@@ -24,7 +24,7 @@ App({
                 wx.cloud.init({ env: cloudCfg.envId, traceUser: true })
                 this.globalData.cloudEnvId = cloudCfg.envId
             }
-        } catch (e) {}
+        } catch (e) { }
     },
 
     request(path, { method = 'GET', header = {}, data = {}, dataType = 'json' } = {}) {
