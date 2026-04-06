@@ -1,6 +1,6 @@
 FROM node:18-alpine
 
-# 工作目录
+# TreeHole Server
 WORKDIR /app
 
 # 环境变量
