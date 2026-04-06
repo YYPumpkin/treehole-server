@@ -6,6 +6,7 @@ const path = require('path')
 const fs = require('fs')
 const multer = require('multer')
 const { authUser } = require('./lib/auth')
+const { getPool } = require('./db')
 const userRoutes = require('./routes/user')
 const storyRoutes = require('./routes/story')
 const editorRoutes = require('./routes/editor')
@@ -70,6 +71,18 @@ app.get('/api/health', async (req, res) => {
     }
 })
 
+// Debug endpoint (safe): 返回非敏感的运行时环境状态，便于排查
+app.get('/api/debug', (req, res) => {
+    const env = {
+        NODE_ENV: process.env.NODE_ENV || 'development',
+        PORT: process.env.PORT || '3000',
+        DB_HOST: process.env.DB_HOST ? 'set' : 'unset',
+        DB_NAME: process.env.DB_NAME ? 'set' : 'unset',
+        MIGRATE_ON_START: process.env.MIGRATE_ON_START || '0'
+    }
+    res.json({ success: true, env })
+})
+
 const PORT = process.env.PORT || 3000
 
 async function startServer() {
@@ -91,4 +104,16 @@ async function startServer() {
 
 startServer().catch(e => {
     console.error('Failed to start server', e)
+})
+
+// 全局错误处理中间件：捕获 body-parser 的 JSON 解析错误与未处理错误
+app.use((err, req, res, next) => {
+    if (!err) return next()
+    // body-parser JSON 解析错误
+    if (err.type === 'entity.parse.failed' || err instanceof SyntaxError) {
+        console.error('JSON parse error:', err)
+        return res.status(400).json({ success: false, message: '请求体 JSON 解析失败' })
+    }
+    console.error('Unhandled error middleware:', err)
+    res.status(500).json({ success: false, message: '服务器内部错误' })
 })

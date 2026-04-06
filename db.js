@@ -12,6 +12,16 @@ async function getPool() {
         connectionLimit: 10,
         charset: 'utf8mb4'
     })
+    // 尝试快速连接测试，失败时记录详细错误，保留 pool 以便后续重试
+    try {
+        const conn = await pool.getConnection()
+        await conn.ping()
+        conn.release()
+        console.log('DB pool created and ping OK')
+    } catch (e) {
+        console.error('Warning: initial DB ping failed:', e)
+        // 不抛出，以便应用可继续启动用于调试（health endpoint 会报告错误）
+    }
     return pool
 }
 
