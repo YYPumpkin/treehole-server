@@ -17,8 +17,12 @@ COPY . .
 # 为健康检查安装 curl（alpine 环境）
 RUN apk add --no-cache curl
 
+# 确保 uploads 目录存在
+RUN mkdir -p /app/uploads
+
 # 运行时使用非 root 用户
-RUN addgroup -S app && adduser -S app -G app
+RUN addgroup -S app && adduser -S app -G app \
+    && chown -R app:app /app
 USER app
 
 EXPOSE 3000
